@@ -33,6 +33,7 @@ game = Game()
 def battle(player, enemies):
     battling = True
     paused = False
+    player.target = 1
 
     while battling:
         for event in pygame.event.get():
@@ -58,7 +59,11 @@ def battle(player, enemies):
             if player.cooldown == 0:
                 if not enemies[player.target-1].defending:
                     enemies[player.target-1].health -= player.attack
+                if enemies[player.target-1].cooldown <= 8:
+                    enemies[player.target-1].ai_choice = "cancelled"
+                    enemies[player.target-1].cooldown = 64
                 player.cooldown = 80 - player.speed
+
         if keys[pygame.K_s]:
             if player.cooldown == 0:
                 player.defending = True
@@ -161,14 +166,14 @@ def player_choose_reward():
 
         font = pygame.font.Font(None, 45)
         text = font.render("Choose a reward:", 1, RED)
-        screen.blit(text, (150,10))
+        screen.blit(text, (150, 10))
 
         font = pygame.font.Font(None, 45)
         text = font.render("1 : +2 HP", 1, RED)
         screen.blit(text, (50, 50))
 
         font = pygame.font.Font(None, 45)
-        text = font.render("2 : +2 SPEED", 1, RED)
+        text = font.render("2 : +4 SPEED", 1, RED)
         screen.blit(text, (50, 100))
         pygame.display.flip()
 
@@ -185,7 +190,7 @@ def player_choose_reward():
                     game.player.health = game.player.max_health
                     reward_chosen = True
                 if event.key == pygame.K_2:
-                    game.player.speed += 2
+                    game.player.speed += 4
                     reward_chosen = True
 
 
@@ -221,9 +226,9 @@ def loop():
             while game.looping:
                 screen.fill(BLACK)
 
-                font = pygame.font.Font(None, 45)
-                text = font.render("YOU WIN:", 1, RED)
-                screen.blit(text, (150, 250))
+                font = pygame.font.Font(None, 75)
+                text = font.render("YOU WIN", 1, RED)
+                screen.blit(text, (150, 150))
                 pygame.display.flip()
 
                 for event in pygame.event.get():
